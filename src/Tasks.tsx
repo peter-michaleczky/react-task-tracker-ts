@@ -1,10 +1,11 @@
-import {Task} from "./models";
+import {TaskModel} from "./models";
+import Task from "./Task";
 
-const Tasks = ({tasks}: {tasks: Task[]}) => {
+const Tasks = ({tasks}: {tasks: TaskModel[]}) => {
     return (
         <>
             {tasks.map((task) => (
-                <h3 key={task.id}>{task.text}</h3>
+                <Task key={task.id} task={task}/>
             ))}
         </>
     );

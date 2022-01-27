@@ -1,11 +1,11 @@
 import './App.css'
 import {Header} from "./Header";
 import {useState} from "react";
-import {Task} from "./models";
+import {TaskModel} from "./models";
 import Tasks from "./Tasks";
 
 const App = () => {
-    const [tasks, setTasks] = useState<Task[]>([
+    const [tasks, setTasks] = useState<TaskModel[]>([
         {
             id: 1,
             text: 'Task 1',

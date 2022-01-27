@@ -69,6 +69,9 @@ const Button = ({ color, text, onClick }: Props) => {
 ### Component state
 
 - declare models and DTOs as interfaces (we don't need them transpiled as js classes)
+  - interface names can easily interfere with component names (Task component with Task model interface)  
+    - idea #1: add purpose of the interface instead of prefixing everything with 'I' (ITask is bad, TaskModel is good)
+    - idea #2: use Impl postfix for implementations => this won't work for components!
   - no cross-import is supported in TS, best practice: keep them in models.tsx or models/ directory
 - declare state variables in App.tsx (declare global state objects) -> redux will do this differently
   - `const tasks: Tasks[] = useState<Task[]>({defaultState...})` (useState with generics!)
