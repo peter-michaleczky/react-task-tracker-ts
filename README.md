@@ -1,7 +1,5 @@
-# Overview 
-Doing the [React Task Tracker tutorial](https://www.youtube.com/watch?v=w7ejDZ8SWv8) in TypeScript.
-
-# React and Redux
+# Task Tracker Tutorial in TS w/ Redux 
+Doing the [React Task Tracker tutorial](https://www.youtube.com/watch?v=w7ejDZ8SWv8) in TypeScript and adding Redux.
 
 ## Pre-requisites
 
@@ -38,7 +36,7 @@ In Preferences / Languages & Features / Node.js:
 
 - TypeScript grants compile time type checking while PropTypes is for runtime type checking in React
 
-### Props
+### Component properties
 
 - To use destructured properties ({tile, color} instead of props) in TypeScript:
   - inline declaration: `const Header = ({title, color}: {title: string, color: string}) => {...`
@@ -67,3 +65,10 @@ const Button = ({ color, text, onClick }: Props) => {
     )
 }
 ```
+
+### Component state
+
+- declare models and DTOs as interfaces (we don't need them transpiled as js classes)
+  - no cross-import is supported in TS, best practice: keep them in models.tsx or models/ directory
+- declare state variables in App.tsx (declare global state objects) -> redux will do this differently
+  - `const tasks: Tasks[] = useState<Task[]>({defaultState...})` (useState with generics!)
