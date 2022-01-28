@@ -1,26 +1,20 @@
 import './App.css'
 import {Header} from "./Header";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {TaskModel} from "./models";
 import Tasks from "./Tasks";
+import axios from "axios";
+
+const API_URL = 'http://localhost:5000';
 
 const App = () => {
-    const [tasks, setTasks] = useState<TaskModel[]>([
-        {
-            id: 1,
-            text: 'Task 1',
-            day: '2022-01-27',
-            reminder: false,
-        },
-        {
-            id: 2,
-            text: 'Task 2',
-            day: '2022-01-29',
-            reminder: true,
-        },
-    ]);
-
     const title = 'Task Tracker';
+
+    const [tasks, setTasks] = useState<TaskModel[]>([]);
+
+    useEffect(() => {
+        if (tasks.length === 0) fetchTasksAsync().then();
+    }, [tasks])
 
     const deleteTask = (id: number) => {
         setTasks(tasks.filter((task) => task.id !== id));
@@ -34,6 +28,16 @@ const App = () => {
         const id = Math.floor(Math.random() * 10000 + 1);
         const newTask = {...task, id};
         setTasks([...tasks, newTask]);
+    }
+
+    const fetchTasksAsync = async () => {
+        try {
+            const url = new URL(API_URL + '/tasks');
+            const resp = await axios.get(url.toString());
+            setTasks(resp.data);
+        } catch (ex) {
+            console.error(ex);
+        }
     }
 
     return (

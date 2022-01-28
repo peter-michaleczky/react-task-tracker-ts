@@ -57,7 +57,7 @@ In Preferences / Languages & Features / Node.js:
 
 Example:
 
-```
+```typescript
 interface Props {
     color?: string;
     text?: string;
@@ -87,15 +87,56 @@ const Button = ({ color, text, onClick }: Props) => {
 - declare state variables in App.tsx (declare global state objects) -> redux will do this differently
   - `const tasks: Tasks[] = useState<Task[]>({defaultState...})` (useState with generics!)
 
-## Handling events
+### Handling events
 
 - if you want to access element-specific data in event handler code
   - declare events in component props with proper type (e.g. `MouseEventHandler<SVGElement>`)
 - otherwise, you can use EventHandler<T> by providing a parent type in generic as a type: `EventHandler<any>`
   - note: `any` would irritate the linter, however React use any in the definition of EventHandler as well
 
+### Fetching data from server
+
+- axios library supports [exception handling out of the box](https://blog.bitsrc.io/performing-http-requests-fetch-vs-axios-b62b44fed10d#:~:text=Key%20Differences%3A,to%20a%20String%20(Stringified).), while fetch() only rejects the promise
+- add ...Async postfix to functions which are declared with the async keyword
+  - call them with .then() from sync methods
+- useEffect might end in [infinite loop](https://dmitripavlutin.com/react-useeffect-infinite-loop/)
+  - due to that useEffect is scheduled after _every_ DOM changes (and DOM changes are triggered by observables change). 
+    - in the async function always check whether data has been loaded earlier
+    - provide dependency or dependencies as a second parameter for useEffect
+
+```typescript
+    const [tasks, setTasks] = useState<TaskModel[]>([]);
+    
+    const fetchTasksAsync = async () => {
+      try {
+        const url = new URL(API_URL + '/tasks');
+        const resp = await axios.get(url.toString());
+        setTasks(resp.data);
+      } catch (ex) {
+        console.error(ex);
+      }
+    }
+
+    useEffect(() => {
+        if (tasks.length === 0) fetchTasksAsync().then();
+    }, [tasks])
+```
+
+## Running locally and testing
+
+### Fake REST API server
+
+Fake REST API server to develop and test frontend code:
+
+- Install [json-server](https://github.com/typicode/json-server) package as a dev depency: `yarn add --dev json-server`
+- Add a new run script to package json: `"mock-backend": "json-server --watch db.json --port 5000"`
+
+`yarn mock-backend` starts the mock BE server. The endpoints and responses is described in db.json.
+See the json-server GitHub page for the documentation! 
+
 ## Materials
 
 - [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
 - [TypeScript / Object Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#property-modifiers)
 - [IntelliJ / React](https://www.jetbrains.com/help/idea/react.html)
+- [JSON server - fake REST API](https://github.com/typicode/json-server)
