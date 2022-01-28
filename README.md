@@ -24,6 +24,17 @@ corepack prepare yarn@1.22.17 --activate
 
 Execute `yarn create vite` and select react, react_ts template.
 
+### Debug vite project from IntelliJ/WebStorm
+
+You can debug vite projects simply from Chrome, vite makes the original TypeScript code available via source maps. 
+Also install React Developer Tools in Chrome!
+
+It's worth later to investigate how debug can be done directly from IntelliJ. 
+- if you run the vite project by creating an npm configuration (see package.json for the proper script!) you can debug the vite runtime only!
+
+Plugins for IntelliJ:
+- [Vite Integration plugin](https://github.com/rxliuli/liuli-tools/tree/master/jetbrains-plugins/vite-jetbrains-plugin) for JetBrains IDEs are only support scaffolding projects at the moment 
+
 ### Issue: IntelliJ cannot find node.js and yarn
 
 When using corepack in Node v16+, follow these steps:
@@ -38,11 +49,11 @@ In Preferences / Languages & Features / Node.js:
 
 ### Component properties
 
-- To use destructured properties ({tile, color} instead of props) in TypeScript:
+- To use destructured properties ({tile, color} instead of one props parameter/attribute) in TypeScript:
   - inline declaration: `const Header = ({title, color}: {title: string, color: string}) => {...`
   - define interface: `const Header = ({title, color}: HeaderProps) => {...`
 - use ? operator to define optional properties
-- use proper event handler types
+- use proper event handler types (see later in Event Handling!)
 
 Example:
 
@@ -75,3 +86,16 @@ const Button = ({ color, text, onClick }: Props) => {
   - no cross-import is supported in TS, best practice: keep them in models.tsx or models/ directory
 - declare state variables in App.tsx (declare global state objects) -> redux will do this differently
   - `const tasks: Tasks[] = useState<Task[]>({defaultState...})` (useState with generics!)
+
+## Handling events
+
+- if you want to access element-specific data in event handler code
+  - declare events in component props with proper type (e.g. `MouseEventHandler<SVGElement>`)
+- otherwise, you can use EventHandler<T> by providing a parent type in generic as a type: `EventHandler<any>`
+  - note: `any` would irritate the linter, however React use any in the definition of EventHandler as well
+
+## Materials
+
+- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
+- [TypeScript / Object Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#property-modifiers)
+- [IntelliJ / React](https://www.jetbrains.com/help/idea/react.html)
