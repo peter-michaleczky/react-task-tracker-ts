@@ -122,21 +122,71 @@ const Button = ({ color, text, onClick }: Props) => {
     }, [tasks])
 ```
 
+## State management with Redux
+
+### Install redux
+
+To the existing project you can add redux by `yarn add redux react-redux @reduxjs/toolkit` command from the console.
+For TypeScript projects we are going to use [Redux Toolkit](https://redux-toolkit.js.org/introduction/getting-started) to 
+write middleware/store logic.
+
+### Create store
+
+- in store.ts the store is created 
+  - [defined type hooks](https://redux.js.org/usage/usage-with-typescript#define-typed-hooks) will make development easier in TypeScript
+
+## Create slice
+
+Slice is a partial structure of the whole app state.
+With createSlice function Redux Toolkit creates you all neccessary actions, reducers automatically for the partial state 
+in a typesafe way.
+
+- define state as an interface and use it to define InitialState! => ensures thet TS infer the types correctly
+  - for CRUD-like stores use [entity adapters](https://redux-toolkit.js.org/api/createEntityAdapter). This makes the code simple and readable, plus type safe!
+- createSlice: no need to worry of types, creates actions and reducers properly
+  - does createSlice manage immutability throught first state (Draft<State>) parameter? 
+- code structure: use feature directory and put all feature specific coded there?
+  - later app can lazy-load chunks per features (to save app load time)
+
+Example:
+
+```typescript
+const tasksAdapter = createEntityAdapter<TaskModel>({
+    selectId: task => task.id,
+    sortComparer: (a, b) => a.text.localeCompare(b.text)
+})
+
+export const counterSlice = createSlice({
+    name: 'tasks',
+    initialState: tasksAdapter.getInitialState(),
+    reducers: {
+        taskAdded: tasksAdapter.addOne,
+        taskSetAll: tasksAdapter.setAll,
+        taskRemoved: tasksAdapter.removeOne,
+    }
+});
+```
+
 ## Running locally and testing
 
 ### Fake REST API server
 
 Fake REST API server to develop and test frontend code:
 
-- Install [json-server](https://github.com/typicode/json-server) package as a dev depency: `yarn add --dev json-server`
+- Install [json-server](https://github.com/typicode/json-server) package as a dev dependency: `yarn add --dev json-server`
 - Add a new run script to package json: `"mock-backend": "json-server --watch db.json --port 5000"`
 
 `yarn mock-backend` starts the mock BE server. The endpoints and responses is described in db.json.
-See the json-server GitHub page for the documentation! 
+See the json-server GitHub page for the documentation!
+
+How to start two npm servers concurrently? Use the [concurrently](https://github.com/open-cli-tools/concurrently) package!
 
 ## Materials
 
+- [React JS Crash Course](https://www.youtube.com/watch?v=w7ejDZ8SWv8)
 - [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
 - [TypeScript / Object Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#property-modifiers)
 - [IntelliJ / React](https://www.jetbrains.com/help/idea/react.html)
+- [Redux Toolkit](https://redux-toolkit.js.org/introduction/getting-started)
+- [How to setup slices with Redux Toolkit?](https://www.softkraft.co/how-to-setup-slices-with-redux-toolkit/)
 - [JSON server - fake REST API](https://github.com/typicode/json-server)
